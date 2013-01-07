@@ -12,11 +12,12 @@ Use this code when starting out node projects
 
 ###To install the app:
 
-In terminal type 'make install'
+    make install
 
 ###To run the app:
 
-In terminal type 'make run'
+    make run
+
 Go to http://localhost:3000.
 
 ###To update to the latest boilerplate
