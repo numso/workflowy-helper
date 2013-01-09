@@ -1,6 +1,7 @@
 mixin mainnav(num)
   - var navs = [{name:'Home', href:'/'}, {name:'Settings', href:'/settings'}, {name:'Logout', href:'/logout'}]
   .mainnav
+    .title WorkFlowy Helper App
     .items
       each nav, i in navs
         - var klass = (i === num) ? 'selected' : ''

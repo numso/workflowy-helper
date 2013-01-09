@@ -9,14 +9,25 @@ $(function () {
       groups.push($(candidates[i]).data('wfid'));
     startWorkflowy(groups);
   }
+
+  $('.showHidden').click(function (e) {
+    $(this).closest('.list').find('.completed').toggle();
+  });
 });
 
 function startCalendar() {
-  $('#calendar').fullCalendar({});
+  $('#calendar').fullCalendar({
+    header: {
+    left:   'prev,next today',
+    center: 'title',
+    right:  'month,basicWeek,basicDay'
+}
+  });
 };
 
 function startWorkflowy(groups) {
   $.get('/getWorkflowy', function (data) {
+    $('.loading').remove();
     if (!data.success) return alert("Error: invalid workflowy cookie");
     populateWorkflowy(data.workflowy, groups);
   });

@@ -72,10 +72,21 @@ function getWorkflowy(req, res, next) {
         return res.send({success: false, err: 'bad cookie'});
 
       eval(d);
-      return res.send({
+
+      var myObj = {
         success: true,
         workflowy: MAIN_PROJECT_TREE_INFO.rootProjectChildren
-      });
+      };
+
+      if (AUXILIARY_PROJECT_TREE_INFOS && AUXILIARY_PROJECT_TREE_INFOS.length)
+        for (var i = 0; i < AUXILIARY_PROJECT_TREE_INFOS.length; ++i)
+          myObj.workflowy.push({
+            id: AUXILIARY_PROJECT_TREE_INFOS[i].rootProject.id,
+            nm: AUXILIARY_PROJECT_TREE_INFOS[i].rootProject.nm,
+            ch: AUXILIARY_PROJECT_TREE_INFOS[i].rootProjectChildren
+          });
+
+      return res.send(myObj);
     });
   });
 

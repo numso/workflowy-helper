@@ -8,7 +8,11 @@ body {
 html {
   height: 100%;
 }
-.list {
+.wfLists {
+  padding-bottom: 200px;
+}
+.wfLists .list {
+  min-width: 200px;
   display: inline-block;
   vertical-align: top;
   font-size: 14px;
@@ -17,13 +21,14 @@ html {
   margin: 0 20px;
   box-shadow: 0 0 20px 2px rgba(0,0,0,0.5);
 }
-.completed {
+.wfLists .list .completed {
   color: #aaa;
+  display: none;
 }
 .error {
   color: #f00;
   font-size: 35px;
-  margin: 30px;
+  text-align: center;
 }
 .login {
   background-color: #ccfdd2;
@@ -154,6 +159,12 @@ html {
   background-color: #000;
   height: 40px;
 }
+.mainnav .title {
+  color: #fff;
+  margin-left: 100px;
+  font-size: 30px;
+  float: left;
+}
 .mainnav .items {
   float: right;
   margin-right: 100px;
@@ -173,4 +184,18 @@ html {
   background-color: #999;
   text-decoration: underline;
   color: #000;
+}
+.loading {
+  text-align: center;
+}
+.loading img {
+  height: 100px;
+}
+.loading span {
+  position: relative;
+  top: -45px;
+}
+#calendar {
+  width: 800px;
+  margin: 30px auto;
 }
