@@ -1,0 +1,21 @@
+extends ../layout
+
+block title
+  title Course Correct - Login
+
+block content
+  .login
+    .login-container
+      .login-box
+        .not-a-member
+          a(href='/register') Don't have an account?
+        .title Login
+        .fields
+          input(type='text', placeholder="username or email").user-field
+          input(type='password', placeholder="password").password-field
+        .login-info
+        .login-btn
+          input(type='button', value='Login')
+
+append scripts
+  script(src='/js/login.js')

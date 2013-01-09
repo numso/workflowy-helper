@@ -1,0 +1,26 @@
+extends ../layout
+
+block title
+  title Course Correct - Register
+
+block content
+  .register
+    .register-container
+      .register-box
+        .already-member
+          a(href='/login') Already have an account?
+        .title Register
+        .fields
+          input(type='text', placeholder="first name").fname
+          input(type='text', placeholder="last name").lname
+          input(type='text', placeholder="username").user
+          input(type='text', placeholder="email").email
+          input(type='password', placeholder="password").pass
+          input(type='password', placeholder="confirm password").cpass
+          input(type='text', placeholder="register key").rkey
+        .register-info
+        .register-btn
+          input(type='button', value='Register')
+
+append scripts
+  script(src='/js/register.js')

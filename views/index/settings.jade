@@ -1,0 +1,28 @@
+extends ../layout
+include ../components/mainNav
+
+block content
+  +mainnav(1)
+  .settings
+    h1 Settings Page
+    .wfCookie
+      span WorkFlowy Cookie
+      input(type='text', value=user.settings.wfCookie).wfCookie-val
+    .showCal
+      input(type='checkbox', checked=(user.settings.showCalendar == "true")).showCal-val
+      span Show Calendar?
+    .labels
+      .label Workflowy Tags:
+      if user.settings.wfLabels
+        each label in user.settings.wfLabels
+          .wfLabel
+            span name:
+            input(type='text', value=label.name).wfName
+            span id:
+            input(type='text', value=label.id).wfID
+            span.deleteButton x
+      .addNew Add New Label
+    .saveAll Save Changes
+
+append scripts
+  script(src='/js/settings.js')

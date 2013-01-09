@@ -10,9 +10,12 @@ var express = require('express')
 
 var app = express();
 
+app.data = {};
+app.data.users = JSON.parse(fs.readFileSync('db/users.json'));
+
 var sessOptions = {
-  key: 'myApp.sid',
-  secret: "secret-key-goes-here"
+  key: 'dalspage.sid',
+  secret: "6ae0c2595c9d7404b47d6ac70cc7c"
 };
 
 app.configure(function () {
@@ -25,6 +28,7 @@ app.configure(function () {
   app.use(express.methodOverride());
   app.use(express.cookieParser());
   app.use(express.session(sessOptions));
+  app.use(getUser);
   app.use(app.router);
   app.use(require('stylus').middleware(__dirname + '/public'));
   app.use(express.static(path.join(__dirname, 'public')));
@@ -33,6 +37,11 @@ app.configure(function () {
 app.configure('development', function () {
   app.use(express.errorHandler());
 });
+
+function getUser(req, res, next) {
+  res.locals({user: req.session.user});
+  next();
+};
 
 function initMiddlewares(path) {
   app.middleware = {};

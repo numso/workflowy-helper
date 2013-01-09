@@ -1,0 +1,38 @@
+extends ../layout
+include ../components/mainNav
+
+block content
+  +mainnav(0)
+  h1 Welcome to myApp
+  .instructions Instructions
+    ul
+      li Anything marked with #todo #hw or #test will be shown in these lists.
+      li If they have "--- 1/29" then they will be given a due date and placed in the calendar.
+      li If they are marked with #no then they will be ignored.
+      li Completed Items are greyed out and can be toggled on and off.
+
+  - var stile = (user.settings.showCalendar === "false") ? 'display: none' : ''
+  #calendar(style=stile)
+
+  if user.settings.wfCookie
+    .wfLists
+      if user.settings.wfLabels
+        each label in user.settings.wfLabels
+          .list
+            .title= label.name
+            .wfItems(data-wfid=label.id)
+      else
+        .error Looks like you need to add some ids for Workflowy. Head on over to 
+          a(href='/settings') Settings
+  else
+    .error Looks like you need to add a cookie on the 
+      a(href='/settings') Settings
+      |  page
+
+append styles
+  link(rel='stylesheet', href='/css/fullcalendar.css')
+
+append scripts
+  script(src='/js/index.js')
+  script(src='/js/lib/jquery-ui.js')
+  script(src='/js/lib/fullcalendar.js')
