@@ -1,4 +1,8 @@
-var fs = require('fs');
+var fs = require('fs')
+  , bcrypt = require('bcrypt')
+  , shared = require('../db/shared')
+  , mongodb = require('mongodb')
+  , db = shared.get('db');
 
 exports.init = function(app) {
   app.middleware.login = login(app);
@@ -9,71 +13,74 @@ exports.init = function(app) {
 
 function login(app) {
   return function (req, res, next) {
-    var users = app.data.users;
+    var username = req.body.user
+      , pass = req.body.pass;
 
-    var user = req.body.user;
-    var pass = req.body.pass;
+    getUser(username, function (err, user) {
+      if (err) return res.send({status: "err", msg: err.msg});
+      if (!user) return res.send({status: 'err', msg: 'Incorrect Username'});
 
-    for (var i = 0; i < users.length; ++i) {
-      if (users[i].user === user || users[i].email === user) {
-        if (users[i].pass === pass) {
-          users[i].lastLoginIP = req.connection.remoteAddress;
-          fs.writeFileSync('db/users.json', JSON.stringify(app.data.users));
-          req.session.user = users[i];
-          return res.send({status: 'ok'});
-        }
+      if (bcrypt.compareSync(pass, user.pass)) {
+        user.lastLoginIP = req.connection.remoteAddress;
+        req.session.user = user;
+        updateUser(user.user, {lastLoginIP: user.lastLoginIP}, function (){});
+        return res.send({status: 'ok'});
       }
-    }
 
-    res.send({status: 'err', msg: 'Incorrect Username / Password'});
+      return res.send({status: 'err', msg: 'Incorrect Password'});
+    });
   };
 };
 
 function register(app) {
   return function (req, res, next) {
-    var users = app.data.users
-      , user = req.body;
+    var user = req.body;
 
     if (user.rkey !== 'speedyshop1')
       return res.send({status: 'err', msg: 'Wrong Token'});
 
-    for (var i = 0; i < users.length; ++i) {
-      if (users[i].user === user.user)
-        return res.send({status: 'err', msg: 'Username Taken'});
-      if (users[i].email === user.email)
-        return res.send({status: 'err', msg: 'Email Taken'});
-    }
 
-    delete user.cpass;
-    delete user.rkey;
+    userExists(user.user, function (err, exists) {
+      if (exists) return res.send({status: 'err', msg: 'Username Taken'});
 
-    user.settings = {
-      showCalendar: 'true',
-      wfCookie: '',
-      wfLabels: [
-        {
-          name: 'Homework',
-          id: '#hw'
-        },
-        {
-          name: 'Tests',
-          id: '#test'
-        },
-        {
-          name: 'Todo',
-          id: '#todo'
-        }
-      ]
+      finishRegister();
+    });
+
+    function finishRegister() {
+      delete user.cpass;
+      delete user.rkey;
+
+      var salt = bcrypt.genSaltSync(10);
+      user.pass = bcrypt.hashSync(user.pass, salt);
+
+      user.settings = {
+        showCalendar: 'true',
+        wfCookie: '',
+        wfLabels: [
+          {
+            name: 'Homework',
+            id: '#hw'
+          },
+          {
+            name: 'Tests',
+            id: '#test'
+          },
+          {
+            name: 'Todo',
+            id: '#todo'
+          }
+        ]
+      };
+
+      user.id = Date.now() + "" + Math.floor(Math.random() * 1000 + 1);
+      user.lastLoginIP = req.connection.remoteAddress;
+
+      saveNewUser(user, function (err) {
+        if (err) return res.send({status: 'err', msg: err.msg});
+        req.session.user = user;
+        res.send({status: 'ok'});
+      });
     };
-
-    user.id = Date.now() + "" + Math.floor(Math.random() * 1000 + 1);
-    user.lastLoginIP = req.connection.remoteAddress;
-
-    app.data.users.push(user);
-    fs.writeFileSync('db/users.json', JSON.stringify(app.data.users));
-
-    req.session.user = user;
-    res.send({status: 'ok'});
   };
 };
 
@@ -92,4 +99,56 @@ function isLoggedIn(loggedIn, path) {
 
     next();
   };
+};
+
+
+
+function userExists(username, cb) {
+  db.open(function (err, client) {
+    if (err) return cb(err);
+
+    var coll = new mongodb.Collection(client, 'users');
+    coll.findOne({user: username}, function (err, user) {
+      db.close();
+      if (err) return cb(err);
+      if (user) return cb(null, true);
+      return cb(null, false);
+    });
+  });
+};
+
+function updateUser(username, update, cb) {
+  db.open(function (err, client) {
+    if (err) return cb(err);
+
+    var coll = new mongodb.Collection(client, 'users');
+    coll.findAndModify({user: username}, [], {$set: update}, {}, function (err, object) {
+      db.close();
+      return cb(err);
+    });
+  });
+};
+
+function saveNewUser(user, cb) {
+  db.open(function (err, client) {
+    if (err) return cb(err);
+
+    var coll = new mongodb.Collection(client, 'users');
+    coll.insert(user, function (err, docs) {
+      db.close();
+      return cb(err);
+    });
+  });
+};
+
+function getUser(username, cb) {
+  db.open(function (err, client) {
+    if (err) return cb(err);
+
+    var coll = new mongodb.Collection(client, 'users');
+    coll.findOne({user: username}, function (err, user) {
+      db.close();
+      return cb(err, user);
+    });
+  });
 };

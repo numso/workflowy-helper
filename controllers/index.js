@@ -1,5 +1,8 @@
 var https = require('https')
-  , fs = require('fs');
+  , fs = require('fs')
+  , shared = require('../db/shared')
+  , mongodb = require('mongodb')
+  , db = shared.get('db');
 
 exports.init = function(app) {
 
@@ -29,17 +32,24 @@ function updateSettings(app) {
   return function (req, res, next) {
     var newSettings = req.body.settings;
 
-    for (var i = 0; i < app.data.users.length; ++i) {
-      if (app.data.users[i].id === req.session.user.id) {
-        app.data.users[i].settings = newSettings;
-        fs.writeFileSync('db/users.json', JSON.stringify(app.data.users));
-      }
-    }
-
-    req.session.user.settings = newSettings;
-
-    res.send('ok');
+    updateUser(req.session.user.user, {settings: newSettings}, function (err) {
+      if (err) return res.send({status: 'err', msg: err.msg});
+      req.session.user.settings = newSettings;
+      res.send('ok');
+    });
   };
+};
+
+function updateUser(username, update, cb) {
+  db.open(function (err, client) {
+    if (err) return cb(err);
+
+    var coll = new mongodb.Collection(client, 'users');
+    coll.findAndModify({user: username}, [], {$set: update}, {}, function (err, object) {
+      db.close();
+      return cb(err);
+    });
+  });
 };
 
 function getWorkflowy(req, res, next) {

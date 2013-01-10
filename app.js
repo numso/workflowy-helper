@@ -6,10 +6,15 @@
 var express = require('express')
   , http = require('http')
   , path = require('path')
-  , fs = require('fs');
+  , fs = require('fs')
+  , mongodb = require('mongodb')
+  , shared = require('./db/shared');
 
 var app = express();
 
+shared.set('db', setupMongo());
+
+// TODO: DELETE THESE
 app.data = {};
 app.data.users = JSON.parse(fs.readFileSync('db/users.json'));
 
@@ -19,7 +24,7 @@ var sessOptions = {
 };
 
 app.configure(function () {
-  app.set('port', process.env.PORT || 3000);
+  app.set('port', process.env.VMC_APP_PORT || process.env.PORT || 3000);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
   app.use(express.favicon());
@@ -77,6 +82,24 @@ function initFile(app, file, type) {
     console.info('    Loading ' + type + ' ' + match[2] + ' (' + file + ')');
     asset.init(app);
   }
+};
+
+function setupMongo() {
+  if (process.env.VCAP_SERVICES) {
+    var env = JSON.parse(process.env.VCAP_SERVICES)
+      , mongo = env['mongodb-1.8'][0]['credentials'];
+  } else {
+    var mongo = {
+      hostname: "localhost",
+      port: 27017,
+      username: "",
+      password: "",
+      db: "workflowy"
+    }
+  }
+
+  var server = new mongodb.Server(mongo.hostname, mongo.port, {});
+  return new mongodb.Db(mongo.db, server, {w: 1});
 };
 
 initMiddlewares();
