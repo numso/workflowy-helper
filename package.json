@@ -9,7 +9,6 @@
     "express": "3.0.4",
     "jade": "*",
     "stylus": "*",
-    "bcrypt": "~0.7.3",
     "mongodb": "~1.2.8"
   }
 }

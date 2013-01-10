@@ -112,7 +112,7 @@ function setupMongo(cb) {
   var server = new mongodb.Server(mongo.hostname, mongo.port, {});
   var db = new mongodb.Db(mongo.db, server, {w: 1});
 
-  return cb(db);
+  // return cb(db);
 
   if (!mongo.username && !mongo.password)
     return cb(db);

@@ -1,5 +1,5 @@
 var fs = require('fs')
-  , bcrypt = require('bcrypt')
+  // , bcrypt = require('bcrypt')
   , shared = require('../db/shared')
   , mongodb = require('mongodb')
   , db = shared.get('db');
@@ -20,7 +20,8 @@ function login(app) {
       if (err) return res.send({status: "err", msg: err.msg});
       if (!user) return res.send({status: 'err', msg: 'Incorrect Username'});
 
-      if (bcrypt.compareSync(pass, user.pass)) {
+      // if (bcrypt.compareSync(pass, user.pass)) {
+      if (pass === user.pass) {
         user.lastLoginIP = req.connection.remoteAddress;
         req.session.user = user;
         updateUser(user.user, {lastLoginIP: user.lastLoginIP}, function (){});
@@ -50,8 +51,8 @@ function register(app) {
       delete user.cpass;
       delete user.rkey;
 
-      var salt = bcrypt.genSaltSync(10);
-      user.pass = bcrypt.hashSync(user.pass, salt);
+      // var salt = bcrypt.genSaltSync(10);
+      // user.pass = bcrypt.hashSync(user.pass, salt);
 
       user.settings = {
         showCalendar: 'true',
