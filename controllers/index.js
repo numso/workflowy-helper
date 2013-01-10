@@ -2,7 +2,7 @@ var https = require('https')
   , fs = require('fs')
   , shared = require('../db/shared')
   , mongodb = require('mongodb')
-  , db = shared.get('db');
+  , dbStuffs = shared.get('dbStuffs');
 
 exports.init = function(app) {
 
@@ -41,12 +41,12 @@ function updateSettings(app) {
 };
 
 function updateUser(username, update, cb) {
-  db.open(function (err, client) {
+  dbStuffs.db.open(function (err, client) {
     if (err) return cb(err);
 
     var coll = new mongodb.Collection(client, 'users');
     coll.findAndModify({user: username}, [], {$set: update}, {}, function (err, object) {
-      db.close();
+      dbStuffs.db.close();
       return cb(err);
     });
   });

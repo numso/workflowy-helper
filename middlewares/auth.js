@@ -105,12 +105,12 @@ function isLoggedIn(loggedIn, path) {
 
 
 function userExists(username, cb) {
-  db.open(function (err, client) {
+  dbStuffs.db.open(function (err, client) {
     if (err) return cb(err);
 
     var coll = new mongodb.Collection(client, 'users');
     coll.findOne({user: username}, function (err, user) {
-      db.close();
+      dbStuffs.db.close();
       if (err) return cb(err);
       if (user) return cb(null, true);
       return cb(null, false);
@@ -119,36 +119,36 @@ function userExists(username, cb) {
 };
 
 function updateUser(username, update, cb) {
-  db.open(function (err, client) {
+  dbStuffs.db.open(function (err, client) {
     if (err) return cb(err);
 
     var coll = new mongodb.Collection(client, 'users');
     coll.findAndModify({user: username}, [], {$set: update}, {}, function (err, object) {
-      db.close();
+      dbStuffs.db.close();
       return cb(err);
     });
   });
 };
 
 function saveNewUser(user, cb) {
-  db.open(function (err, client) {
+  dbStuffs.db.open(function (err, client) {
     if (err) return cb(err);
 
     var coll = new mongodb.Collection(client, 'users');
     coll.insert(user, function (err, docs) {
-      db.close();
+      dbStuffs.db.close();
       return cb(err);
     });
   });
 };
 
 function getUser(username, cb) {
-  db.open(function (err, client) {
+  dbStuffs.db.open(function (err, client) {
     if (err) return cb(err);
 
     var coll = new mongodb.Collection(client, 'users');
     coll.findOne({user: username}, function (err, user) {
-      db.close();
+      dbStuffs.db.close();
       return cb(err, user);
     });
   });

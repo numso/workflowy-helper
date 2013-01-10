@@ -12,12 +12,9 @@ var express = require('express')
 
 var app = express();
 
-setupMongo(function (db) {
-  shared.set('db', db);
-  keepGoing();
-});
+var stuffs = setupMongo();
 
-function keepGoing() {
+shared.set('dbStuffs', stuffs);
 
 var sessOptions = {
   key: 'dalspage.sid',
@@ -93,9 +90,8 @@ http.createServer(app).listen(app.get('port'), function () {
   console.log("Express server listening on port " + app.get('port'));
 });
 
-};
 
-function setupMongo(cb) {
+function setupMongo() {
   if (process.env.VCAP_SERVICES) {
     var env = JSON.parse(process.env.VCAP_SERVICES)
       , mongo = env['mongodb-1.8'][0]['credentials'];
@@ -115,9 +111,7 @@ function setupMongo(cb) {
   // return cb(db);
 
   if (!mongo.username && !mongo.password)
-    return cb(db);
+    return {db: db};
 
-  db.authenticate(mongo.username, mongo.password, function () {
-    return cb(db);
-  });
+  return {db: db, username: mongo.username, password: mongo.password};
 };
