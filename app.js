@@ -12,11 +12,12 @@ var express = require('express')
 
 var app = express();
 
-shared.set('db', setupMongo());
+setupMongo(function (db) {
+  shared.set('db', db);
+  keepGoing();
+});
 
-// TODO: DELETE THESE
-app.data = {};
-app.data.users = JSON.parse(fs.readFileSync('db/users.json'));
+function keepGoing() {
 
 var sessOptions = {
   key: 'dalspage.sid',
@@ -84,7 +85,17 @@ function initFile(app, file, type) {
   }
 };
 
-function setupMongo() {
+
+initMiddlewares();
+initControllers();
+
+http.createServer(app).listen(app.get('port'), function () {
+  console.log("Express server listening on port " + app.get('port'));
+});
+
+};
+
+function setupMongo(cb) {
   if (process.env.VCAP_SERVICES) {
     var env = JSON.parse(process.env.VCAP_SERVICES)
       , mongo = env['mongodb-1.8'][0]['credentials'];
@@ -99,12 +110,12 @@ function setupMongo() {
   }
 
   var server = new mongodb.Server(mongo.hostname, mongo.port, {});
-  return new mongodb.Db(mongo.db, server, {w: 1});
+  var db = new mongodb.Db(mongo.db, server, {w: 1});
+
+  if (!mongo.username && !mongo.password)
+    return cb(db);
+
+  db.authenticate(mongo.username, mongo.password, function () {
+    return cb(db);
+  });
 };
-
-initMiddlewares();
-initControllers();
-
-http.createServer(app).listen(app.get('port'), function () {
-  console.log("Express server listening on port " + app.get('port'));
-});
