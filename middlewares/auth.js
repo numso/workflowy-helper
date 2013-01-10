@@ -2,7 +2,7 @@ var fs = require('fs')
   // , bcrypt = require('bcrypt')
   , shared = require('../db/shared')
   , mongodb = require('mongodb')
-  , db = shared.get('db');
+  , dbStuffs = shared.get('dbStuffs');
 
 exports.init = function(app) {
   app.middleware.login = login(app);
