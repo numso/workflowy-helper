@@ -5,8 +5,7 @@ help:
 	@echo "   help:      shows these instructions"
 
 run:
-	@supervisor -q -w controllers,middlewares,app.js app
+	@./node_modules/.bin/supervisor -q -w controllers,middlewares,app.js app
 
 install:
-	@npm install -g supervisor
 	@npm install
