@@ -18,8 +18,7 @@ function login(app) {
       if (err) return res.send({status: "err", msg: err.msg});
       if (!user) return res.send({status: 'err', msg: 'Incorrect Username'});
 
-      // if (bcrypt.compareSync(pass, user.pass)) {
-      if (pass === user.pass) {
+      if (bcrypt.compareSync(pass, user.pass)) {
         user.lastLoginIP = req.connection.remoteAddress;
         req.session.user = user;
         User.updateUser(user.user, {lastLoginIP: user.lastLoginIP}, function (){});
@@ -49,8 +48,8 @@ function register(app) {
       delete user.cpass;
       delete user.rkey;
 
-      // var salt = bcrypt.genSaltSync(10);
-      // user.pass = bcrypt.hashSync(user.pass, salt);
+      var salt = bcrypt.genSaltSync(10);
+      user.pass = bcrypt.hashSync(user.pass, salt);
 
       user.settings = {
         showCalendar: 'true',
