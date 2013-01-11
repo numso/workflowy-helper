@@ -1,6 +1,6 @@
 var fs = require('fs'),
-    User = require('../models/user');
-  // , bcrypt = require('bcrypt')
+    User = require('../models/user')
+  , bcrypt = require('bcrypt');
 
 exports.init = function(app) {
   app.middleware.login = login(app);
