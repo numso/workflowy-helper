@@ -543,7 +543,7 @@ module.exports = renderFile;
 module.exports.renderString = renderString;
 });
 
-require.define("/node_modules/browserijade/node_modules/jade/lib/runtime.js",function(require,module,exports,__dirname,__filename,process,global){
+require.define("/node_modules/jade/lib/runtime.js",function(require,module,exports,__dirname,__filename,process,global){
 /*!
  * Jade - runtime
  * Copyright(c) 2010 TJ Holowaychuk <tj@vision-media.ca>
