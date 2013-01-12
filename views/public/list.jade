@@ -1,0 +1,7 @@
+.list
+  if title
+    .title= title
+  if items
+    each item in items
+      .item
+        a(href=item.href)= item.name

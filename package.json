@@ -9,6 +9,8 @@
     "express": "3.0.4",
     "jade": "*",
     "stylus": "*",
-    "supervisor": "~0.5.0"
+    "supervisor": "~0.5.0",
+    "browserijade": "~0.5.7",
+    "browserify": "~1.17.2"
   }
 }

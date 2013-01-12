@@ -1,4 +1,4 @@
-exports.init = function(app) {
+exports.init = function (app) {
   app.middleware.render = render;
 };
 

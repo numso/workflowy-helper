@@ -1,0 +1,12 @@
+extends ../layout
+
+block content
+  h1 Welcome to myApp
+  .lists
+  input(type='button', value="generate list").makeList
+
+append scripts
+  script
+    $(function () {
+      require('/client/test');
+    });
