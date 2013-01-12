@@ -4,9 +4,11 @@ help:
 	@echo "   install:   install dependencies"
 	@echo "   help:      shows these instructions"
 
-run:
-	@supervisor -q -w controllers,middlewares,app.js app
+run: browserify
+	@./node_modules/.bin/supervisor -q -w controllers,middlewares,app.js app
 
 install:
-	@npm install -g supervisor
 	@npm install
+
+browserify:
+	@node bin/browserify.js

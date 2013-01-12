@@ -10,6 +10,9 @@
     "jade": "*",
     "stylus": "*",
     "bcrypt": "~0.7.3",
-    "mongodb": "~1.2.8"
+    "mongodb": "~1.2.8",
+    "supervisor": "~0.5.0",
+    "browserijade": "~0.5.7",
+    "browserify": "~1.17.2"
   }
 }
