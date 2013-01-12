@@ -29,35 +29,31 @@ Go to http://localhost:3000.
 
 ## Where files go
 
-###Client
+###Any requires you want loaded on page load
+put them inside client/  
+require them inside client/main.js
 
-Any requires you want loaded on page load
-    put them inside client/
-    require them inside client/main.js
+###Any requires you want to be able to require after load
+put them inside client/requires/
 
-Any requires you want to be able to require after load
-    put them inside client/requires/
+###Any Javascript libraries
+put them inside public/js/lib/
 
-Any Javascript libraries
-    put them inside public/js/lib/
+###Any Jade files you want to access from the client
+put them inside views/public/
 
-Any Jade files
-    put them inside views/public/
+###Any Styles
+put them inside public/css/
+import them inside public/css/main.styl
 
-Any Styles
-    put them inside public/css/
-    import them inside public/css/main.styl
+###All the controllers
+put them inside controllers/
 
-###Server
+###All the Jade files
+put them inside views/
 
-All the controllers
-    put them inside controllers/
+###All the middleware
+put them inside middleware/
 
-All the Jade files
-    put them inside views/
-
-All the middleware
-    put them inside middleware/
-
-All the models
-    put them inside models/
+###All the models
+put them inside models/
