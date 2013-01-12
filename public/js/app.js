@@ -432,7 +432,7 @@ process.binding = function (name) {
 
 });
 
-require.define("list.jade",function(require,module,exports,__dirname,__filename,process,global){module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
+require.define("list-test.jade",function(require,module,exports,__dirname,__filename,process,global){module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
 attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
 var buf = [];
 with (locals || {}) {
@@ -485,30 +485,7 @@ return buf.join("");
 }
 });
 
-require.define("/client/test.js",function(require,module,exports,__dirname,__filename,process,global){var render = require('./render');
-
-$('.makeList').click(function (e) {
-  var items = [
-    {
-      href: '#',
-      name: 'one'
-    },
-    {
-      href: '#',
-      name: 'two'
-    },
-    {
-      href: '#',
-      name: 'three'
-    }
-  ];
-
-  $('.lists').append(render('list', { title: 'test', items: items }));
-});
-
-});
-
-require.define("/client/render.js",function(require,module,exports,__dirname,__filename,process,global){var render = require('browserijade');
+require.define("/client/requires/render.js",function(require,module,exports,__dirname,__filename,process,global){var render = require('browserijade');
 
 module.exports = function (view, locals) {
   return render(view, locals);

@@ -1,14 +1,17 @@
-help:
-	@echo "make"
-	@echo "   run:       run the code"
-	@echo "   install:   install dependencies"
-	@echo "   help:      shows these instructions"
+SUPERVISOR := ./node_modules/.bin/supervisor
 
-run: browserify
-	@./node_modules/.bin/supervisor -q -w controllers,middlewares,app.js app
+all:
+	@make -j browserify server
+
+run: all
 
 install:
 	@npm install
 
+server:
+	@$(SUPERVISOR) -q -w controllers,middlewares,app.js app
+
 browserify:
-	@node bin/browserify.js
+	@$(SUPERVISOR) -q -w views/public,client/requires bin/browserify
+
+.PHONY: server browserify install run all

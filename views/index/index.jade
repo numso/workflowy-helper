@@ -3,10 +3,10 @@ extends ../layout
 block content
   h1 Welcome to myApp
   .lists
-  input(type='button', value="generate list").makeList
 
 append scripts
   script
     $(function () {
-      require('/client/test');
+      var render = require('/client/requires/render');
+      $(".lists").append(render('list-test', { title: 'hi', items: [] }));
     });
