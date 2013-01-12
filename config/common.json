@@ -1,0 +1,9 @@
+{
+  "browserify": {
+    "entry": "main.js",
+    "require": [
+      "/test.js",
+      "/render.js"
+    ]
+  }
+}
