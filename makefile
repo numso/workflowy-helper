@@ -1,7 +1,7 @@
 SUPERVISOR := ./node_modules/.bin/supervisor
 
 all:
-	@make -j browserify server
+	@make -j browserify styl server
 
 run: all
 
@@ -12,6 +12,9 @@ server:
 	@$(SUPERVISOR) -q -w controllers,middlewares,app.js app
 
 browserify:
-	@$(SUPERVISOR) -q -w views/public,client/requires bin/browserify
+	@$(SUPERVISOR) -q -e 'js|jade' -w views/public,client/requires,client/main.js bin/browserify
 
-.PHONY: server browserify install run all
+styl:
+	@$(SUPERVISOR) -q -e 'styl' -w 'public/styl' bin/styl
+
+.PHONY: server browserify install run styl all

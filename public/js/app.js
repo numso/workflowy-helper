@@ -491,6 +491,7 @@ module.exports = function (view, locals) {
   return render(view, locals);
 };
 
+// test
 });
 
 require.define("/node_modules/browserijade/package.json",function(require,module,exports,__dirname,__filename,process,global){module.exports = {"main":"./lib/middleware","browserify":"./lib/browserijade"}
@@ -702,6 +703,7 @@ require.define("fs",function(require,module,exports,__dirname,__filename,process
 });
 
 require.define("/client/main.js",function(require,module,exports,__dirname,__filename,process,global){window.require = require;
+
 });
 require("/client/main.js");
 })();
