@@ -2,6 +2,7 @@ var browserify   = require('browserify')
   , browserijade = require('browserijade')
   , fs           = require('fs')
   , sleep        = require('sleep')
+  , config       = require('../config')
   ;
 
 function log() {
@@ -22,7 +23,7 @@ bundle.on('syntaxError', function (err) {
 });
 
 log('loading jade views');
-bundle.use(browserijade(__dirname + "/../views/public"));
+bundle.use(browserijade(__dirname + "/../" + config.browserify.jade));
 
 log('running requires');
 function addFiles(folder) {
@@ -40,15 +41,15 @@ function addFiles(folder) {
     }
   }
 };
-addFiles("./client/requires");
+addFiles(config.browserify.requires);
 
-var entry = './client/main.js';
+var entry = config.browserify.entry;
 log('adding entry: ' + entry);
 bundle.addEntry(entry);
 
 function write() {
   var src = bundle.bundle();
-  var outfile = './public/js/app.js';
+  var outfile = config.browserify.output;
   log('writing ' + outfile);
   fs.writeFileSync(outfile, src);
 };

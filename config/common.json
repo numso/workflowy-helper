@@ -1,0 +1,14 @@
+{
+  "browserify": {
+    "entry": "./client/main.js",
+    "requires": "./client/requires",
+    "output": "./public/js/app.js",
+    "jade": "./views/public"
+  },
+
+  "styl": {
+    "path": "./public/styl/",
+    "entry": "main.styl",
+    "output": "./public/css/main.css"
+  }
+}
