@@ -1,22 +1,19 @@
-$(function () {
+$('.deleteButton').click(function () {
+  $(this).closest('.wfLabel').remove();
+});
 
-  $('.deleteButton').click(function () {
+$('.addNew').click(function () {
+  $(this).before('<div class="wfLabel"><span>name:</span><input type="text" class="wfName"><span>id:</span><input type="text" class="wfID"><span class="deleteButton">x</span></div>');
+
+  $('.deleteButton').last().click(function () {
     $(this).closest('.wfLabel').remove();
   });
 
-  $('.addNew').click(function () {
-    $(this).before('<div class="wfLabel"><span>name:</span><input type="text" class="wfName"><span>id:</span><input type="text" class="wfID"><span class="deleteButton">x</span></div>');
+  $('.wfName').last().focus();
+});
 
-    $('.deleteButton').last().click(function () {
-      $(this).closest('.wfLabel').remove();
-    });
-
-    $('.wfName').last().focus();
-  });
-
-  $('.saveAll').click(function () {
-    saveAll();
-  });
+$('.saveAll').click(function () {
+  saveAll();
 });
 
 function saveAll() {

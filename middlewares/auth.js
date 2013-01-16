@@ -15,7 +15,7 @@ function login(app) {
       , pass = req.body.pass;
 
     User.getUser(username, function (err, user) {
-      if (err) return res.send({status: "err", msg: err.msg});
+      if (err) return res.send({status: "err", msg: "is mongodb running?", errmsg: err.msg});
       if (!user) return res.send({status: 'err', msg: 'Incorrect Username'});
 
       if (bcrypt.compareSync(pass, user.pass)) {

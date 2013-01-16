@@ -1,18 +1,14 @@
-$(function () {
-  bindHandlers();
-  $($('input')[0]).focus();
+$('input[type=button]').click(function (e) {
+  processRegistration();
 });
 
-function bindHandlers() {
-  $('input[type=button]').click(function (e) {
+$('.rkey').keypress(function (e) {
+  if (e.keyCode === 13)
     processRegistration();
-  });
+});
 
-  $('.rkey').keypress(function (e) {
-    if (e.keyCode === 13)
-      processRegistration();
-  });
-};
+$($('input')[0]).focus();
+
 
 function processRegistration() {
   var userObj = {

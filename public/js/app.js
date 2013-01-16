@@ -432,83 +432,166 @@ process.binding = function (name) {
 
 });
 
-require.define("list.jade",function(require,module,exports,__dirname,__filename,process,global){module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
+require.define("listItem.jade",function(require,module,exports,__dirname,__filename,process,global){module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
 attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
 var buf = [];
 with (locals || {}) {
 var interp;
-buf.push('<div class="list">');
-if ( title)
-{
-buf.push('<div class="title">');
+ var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+ var klass = completed ? 'completed' : '';
+buf.push('<div');
+buf.push(attrs({ 'style':('color:' + color) }, {"style":true}));
+buf.push('><a');
+buf.push(attrs({ 'href':(url), 'style':('color:' + color), "class": (klass) }, {"href":true,"class":true,"style":true}));
+buf.push('>');
 var __val__ = title
 buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</div>');
-}
-if ( items)
+buf.push('</a>');
+ if (start)
 {
-// iterate items
-;(function(){
-  if ('number' == typeof items.length) {
-
-    for (var $index = 0, $$l = items.length; $index < $$l; $index++) {
-      var item = items[$index];
-
-buf.push('<div class="item"><a');
-buf.push(attrs({ 'href':(item.href) }, {"href":true}));
-buf.push('>');
-var __val__ = item.name
-buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</a></div>');
-    }
-
-  } else {
-    var $$l = 0;
-    for (var $index in items) {
-      $$l++;      var item = items[$index];
-
-buf.push('<div class="item"><a');
-buf.push(attrs({ 'href':(item.href) }, {"href":true}));
-buf.push('>');
-var __val__ = item.name
-buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</a></div>');
-    }
-
-  }
-}).call(this);
-
+buf.push('<div>due on ' + escape((interp = MONTHS[start.getMonth()]) == null ? '' : interp) + ' ' + escape((interp = start.getDate()) == null ? '' : interp) + '</div>');
 }
-buf.push('</div>');
+buf.push('</div><div>blaoeuaoeunsoaehtaoeu</div>');
 }
 return buf.join("");
 }
 });
 
-require.define("/client/test.js",function(require,module,exports,__dirname,__filename,process,global){var render = require('./render');
+require.define("/client/requires/index.js",function(require,module,exports,__dirname,__filename,process,global){var render = require('./render');
 
-$('.makeList').click(function (e) {
-  var items = [
-    {
-      href: '#',
-      name: 'one'
-    },
-    {
-      href: '#',
-      name: 'two'
-    },
-    {
-      href: '#',
-      name: 'three'
+var calEvents = [];
+
+$('#calendar').fullCalendar({
+  header: {
+    left:   'prev,next today',
+    center: 'title',
+    right:  'month,basicWeek,basicDay'
+  }
+});
+
+function refreshCalendarEvents() {
+  $('#calendar').fullCalendar('removeEvents');
+  $('#calendar').fullCalendar('addEventSource', { events: calEvents });
+  $('#calendar').fullCalendar('rerenderEvents');
+};
+
+function initializeWorkflowy() {
+  if (!$('.wfItems').length)
+    return $('.loading').remove();
+
+  $.get('/getWorkflowy', function (data) {
+    $('.loading').remove();
+    if (!data.success) return alert("Error: invalid workflowy cookie");
+    parseWFEvents(data.workflowy, getGroups());
+    refreshCalendarEvents();
+  });
+
+  $('.showHidden').click(function (e) {
+    $(this).closest('.list').find('.completed').toggle();
+  });
+};
+
+function getGroups() {
+  var groups = [];
+  var allLists = $('.wfItems');
+  for (var i = 0; i < allLists.length; ++i)
+    groups.push($(allLists[i]).data('wfid'));
+  return groups;
+};
+
+function parseWFEvents(wf, groups) {
+  for (var i = 0; i < wf.length; ++i) {
+    isTagged(wf[i]);
+    if (wf[i].ch && wf[i].ch.length)
+      parseWFEvents(wf[i].ch, groups);
+  }
+
+  function isTagged(item) {
+    for (var i = 0; i < groups.length; ++i)
+      if (item.nm.indexOf(groups[i]) !== -1 && item.nm.indexOf('#no') === -1)
+        addItem(item, groups[i]);
+  };
+};
+
+function addItem(item, group) {
+  var sections = item.nm.split('---')
+    , color = grabColor(sections)
+    , start = grabDate(sections)
+    , title = sections.join('---')
+    ;
+
+  var event = {
+    title: title,
+    allDay: true,
+    start: start,
+    color: color,
+    url: '//www.workflowy.com/#/' + item.id,
+    completed: !!item.cp
+  };
+
+  if (event.start)
+    calEvents.push(event);
+
+  $('.wfItems[data-wfid="' + group + '"]').append(render('listItem', event));
+
+  function grabColor(sections) {
+    for (var i = 1; i < sections.length; ++i) {
+      var section = sections[i];
+      if (section.indexOf('color') !== -1) {
+        section = section.replace('color', '');
+        section = section.trim();
+        sections = sections.splice(i, 1);
+        return section;
+      }
     }
-  ];
+    return '';
+  };
 
-  $('.lists').append(render('list', { title: 'test', items: items }));
+  function grabDate(sections) {
+    for (var i = 1; i < sections.length; ++i) {
+      var section = sections[i];
+      if (section.indexOf('due') !== -1) {
+        section = section.replace('due', '');
+        section = section.trim();
+        section = dateFromString(section);
+        sections = sections.splice(i, 1);
+        return section;
+      }
+    }
+    return '';
+  };
+};
+
+function dateFromString(str) {
+  var datePieces = str.split('/')
+    , today = new Date()
+    , month = today.getMonth()
+    , day = today.getDate()
+    , year = today.getFullYear();
+
+  if (datePieces.length === 1) {
+    day = parseInt(datePieces[0], 10);
+  }
+
+  if (datePieces.length === 2) {
+    month = parseInt(datePieces[0], 10) - 1;
+    day = parseInt(datePieces[1], 10);
+  }
+
+  if (datePieces.length === 3) {
+    month = parseInt(datePieces[0], 10) - 1;
+    day = parseInt(datePieces[1], 10);
+    year = parseInt(datePieces[2], 10);
+  }
+
+  return new Date(year, month, day, 0, 0, 0, 0);
+};
+
+module.exports = initializeWorkflowy;
+
 });
 
-});
-
-require.define("/client/render.js",function(require,module,exports,__dirname,__filename,process,global){var render = require('browserijade');
+require.define("/client/requires/render.js",function(require,module,exports,__dirname,__filename,process,global){var render = require('browserijade');
 
 module.exports = function (view, locals) {
   return render(view, locals);
@@ -721,6 +804,195 @@ exports.rethrow = function rethrow(err, filename, lineno){
 });
 
 require.define("fs",function(require,module,exports,__dirname,__filename,process,global){// nothing to see here... no file methods for the browser
+
+});
+
+require.define("/client/requires/login.js",function(require,module,exports,__dirname,__filename,process,global){
+$('input[type=button]').click(function (e) {
+  processLogin();
+});
+
+$('.password-field').keypress(function (e) {
+  if (e.keyCode === 13)
+    processLogin();
+});
+
+$($('input')[0]).focus();
+
+
+function processLogin() {
+  var userObj = {
+    user: $('.user-field').val(),
+    pass: $('.password-field').val()
+  };
+
+  if (!validate(userObj)) {
+    $($('input')[0]).focus();
+  } else {
+    $('.login-info').css('color', '');
+    $('.login-info').text('Validating...');
+    $.post('/login', userObj, function (data) {
+      if (data.status === "ok") {
+        window.location = '/';
+      } else {
+        $('.login-info').css('color', 'red');
+        $('.login-info').text(data.msg);
+        $($('input')[0]).focus();
+      }
+    });
+  }
+};
+
+function validate(user) {
+  $('input').css('border-color', '');
+  var isValid = true;
+
+  if (!user.pass) {
+    $('.password-field').css('border-color', 'red');
+    isValid = false;
+  }
+
+  if (!user.user) {
+    $('.user-field').css('border-color', 'red');
+    isValid = false;
+  }
+
+  return isValid;
+};
+});
+
+require.define("/client/requires/register.js",function(require,module,exports,__dirname,__filename,process,global){$('input[type=button]').click(function (e) {
+  processRegistration();
+});
+
+$('.rkey').keypress(function (e) {
+  if (e.keyCode === 13)
+    processRegistration();
+});
+
+$($('input')[0]).focus();
+
+
+function processRegistration() {
+  var userObj = {
+    fname: $('.fname').val(),
+    lname: $('.lname').val(),
+    user: $('.user').val(),
+    email: $('.email').val(),
+    pass: $('.pass').val(),
+    cpass: $('.cpass').val(),
+    rkey: $('.rkey').val()
+  };
+
+  if (!validate(userObj)) {
+    $($('input')[0]).focus();
+  } else {
+    $('.register-info').css('color', '');
+    $('.register-info').text('Validating...');
+
+    $.post('/register', userObj, function (data) {
+      if (data.status === "ok") {
+        window.location = '/';
+      } else {
+        $('.register-info').css('color', 'red');
+        $('.register-info').text(data.msg);
+        $($('input')[0]).focus();
+      }
+    });
+  }
+};
+
+function validate(user) {
+  $('input').css('border-color', '');
+  var isValid = true;
+
+  if (!user.fname) {
+    $('.fname').css('border-color', 'red');
+    isValid = false;
+  }
+
+  if (!user.lname) {
+    $('.lname').css('border-color', 'red');
+    isValid = false;
+  }
+
+  if (!user.user) {
+    $('.user').css('border-color', 'red');
+    isValid = false;
+  }
+
+  if (!user.email) {
+    $('.email').css('border-color', 'red');
+    isValid = false;
+  }
+
+  if (!user.pass) {
+    $('.pass').css('border-color', 'red');
+    isValid = false;
+  }
+
+  if (!user.cpass) {
+    $('.cpass').css('border-color', 'red');
+    isValid = false;
+  }
+
+  if (!user.rkey) {
+    $('.rkey').css('border-color', 'red');
+    isValid = false;
+  }
+
+  if (user.pass !== user.cpass) {
+    $('.cpass').css('border-color', 'red');
+    isValid = false;
+  }
+
+  return isValid;
+};
+
+});
+
+require.define("/client/requires/settings.js",function(require,module,exports,__dirname,__filename,process,global){$('.deleteButton').click(function () {
+  $(this).closest('.wfLabel').remove();
+});
+
+$('.addNew').click(function () {
+  $(this).before('<div class="wfLabel"><span>name:</span><input type="text" class="wfName"><span>id:</span><input type="text" class="wfID"><span class="deleteButton">x</span></div>');
+
+  $('.deleteButton').last().click(function () {
+    $(this).closest('.wfLabel').remove();
+  });
+
+  $('.wfName').last().focus();
+});
+
+$('.saveAll').click(function () {
+  saveAll();
+});
+
+function saveAll() {
+  var settings = {
+    showCalendar: !!$('.showCal-val').attr('checked'),
+    wfCookie: $('.wfCookie-val').val(),
+    wfLabels: []
+  };
+
+  var labels = $('.wfLabel');
+  for (var i = 0; i < labels.length; ++i) {
+    var label = $(labels[i]);
+    var myObj = {
+      name: label.find('.wfName').val(),
+      id: label.find('.wfID').val()
+    };
+
+    if (myObj.name && myObj.id)
+      settings.wfLabels.push(myObj);
+  }
+
+  $.post('/updateSettings', {settings: settings}, function () {
+    alert('Settings Successfully Saved!!');
+    window.location.reload();
+  });
+};
 
 });
 

@@ -28,4 +28,7 @@ block content
     .saveAll Save Changes
 
 append scripts
-  script(src='/js/settings.js')
+  script
+    $(function () {
+      require('/client/requires/settings');
+    });

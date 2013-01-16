@@ -23,4 +23,7 @@ block content
           input(type='button', value='Register')
 
 append scripts
-  script(src='/js/register.js')
+  script
+    $(function () {
+      require('/client/requires/register');
+    });

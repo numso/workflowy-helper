@@ -1,0 +1,8 @@
+- var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+- var klass = completed ? 'completed' : '';
+
+div(style='color:' + color)
+  a(href=url, class=klass, style='color:' + color)= title
+  - if (start)
+    div due on #{MONTHS[start.getMonth()]} #{start.getDate()}
+div blaoeuaoeunsoaehtaoeu

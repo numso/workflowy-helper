@@ -1,14 +1,20 @@
-help:
-	@echo "make"
-	@echo "   run:       run the code"
-	@echo "   install:   install dependencies"
-	@echo "   help:      shows these instructions"
+SUPERVISOR := ./node_modules/.bin/supervisor
 
-run: browserify
-	@./node_modules/.bin/supervisor -q -w controllers,middlewares,app.js app
+all:
+	@make -j browserify styl server
+
+run: all
 
 install:
 	@npm install
 
+server:
+	@$(SUPERVISOR) -q -w controllers,middlewares,app.js app
+
 browserify:
-	@node bin/browserify.js
+	@$(SUPERVISOR) -q -e 'js|jade' -w views/public,client/requires,client/main.js bin/browserify
+
+styl:
+	@$(SUPERVISOR) -q -e 'styl' -w 'public/styl' bin/styl
+
+.PHONY: server browserify install run styl all

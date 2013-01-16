@@ -41,6 +41,10 @@ append styles
   link(rel='stylesheet', href='/css/fullcalendar.css')
 
 append scripts
-  script(src='/js/index.js')
   script(src='/js/lib/jquery-ui.js')
   script(src='/js/lib/fullcalendar.js')
+  script
+    $(function () {
+      var init = require('/client/requires/index');
+      init();
+    });

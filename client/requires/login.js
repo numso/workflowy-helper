@@ -1,18 +1,15 @@
-$(function () {
-  bindHandlers();
-  $($('input')[0]).focus();
+
+$('input[type=button]').click(function (e) {
+  processLogin();
 });
 
-function bindHandlers() {
-  $('input[type=button]').click(function (e) {
+$('.password-field').keypress(function (e) {
+  if (e.keyCode === 13)
     processLogin();
-  });
+});
 
-  $('.password-field').keypress(function (e) {
-    if (e.keyCode === 13)
-      processLogin();
-  });
-};
+$($('input')[0]).focus();
+
 
 function processLogin() {
   var userObj = {

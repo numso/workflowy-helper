@@ -1,21 +1,14 @@
-var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+var render = require('./render');
 
 var calEvents = [];
 
-$(function () {
-  initializeCalendar();
-  initializeWorkflowy();
+$('#calendar').fullCalendar({
+  header: {
+    left:   'prev,next today',
+    center: 'title',
+    right:  'month,basicWeek,basicDay'
+  }
 });
-
-function initializeCalendar() {
-  $('#calendar').fullCalendar({
-    header: {
-      left:   'prev,next today',
-      center: 'title',
-      right:  'month,basicWeek,basicDay'
-    }
-  });
-};
 
 function refreshCalendarEvents() {
   $('#calendar').fullCalendar('removeEvents');
@@ -66,20 +59,21 @@ function addItem(item, group) {
     , color = grabColor(sections)
     , start = grabDate(sections)
     , title = sections.join('---')
-    , completed = !!item.cp;
+    ;
 
   var event = {
     title: title,
     allDay: true,
     start: start,
     color: color,
-    url: '//www.workflowy.com/#/' + item.id
+    url: '//www.workflowy.com/#/' + item.id,
+    completed: !!item.cp
   };
 
   if (event.start)
     calEvents.push(event);
 
-  $('.wfItems[data-wfid="' + group + '"]').append(renderMyItem(event, completed));
+  $('.wfItems[data-wfid="' + group + '"]').append(render('listItem', event));
 
   function grabColor(sections) {
     for (var i = 1; i < sections.length; ++i) {
@@ -91,7 +85,7 @@ function addItem(item, group) {
         return section;
       }
     }
-    return undefined;
+    return '';
   };
 
   function grabDate(sections) {
@@ -105,14 +99,7 @@ function addItem(item, group) {
         return section;
       }
     }
-    return undefined;
-  };
-
-  function renderMyItem(event, completed) {
-    var duedate = !!event.start ? '<div>due on ' + MONTHS[event.start.getMonth()] + " " + event.start.getDate() + '</div>': '';
-    var colorStyle = !!event.color ? ' style="color: ' + event.color + '"' : '';
-    var klass = completed ? ' class="completed"' : '';
-    return '<div' + colorStyle + '><a' + colorStyle + ' href="' + event.url + '"' + klass + '">' + event.title + '</a>' + duedate + '</div>';
+    return '';
   };
 };
 
@@ -140,3 +127,5 @@ function dateFromString(str) {
 
   return new Date(year, month, day, 0, 0, 0, 0);
 };
+
+module.exports = initializeWorkflowy;
