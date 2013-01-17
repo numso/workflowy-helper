@@ -440,7 +440,7 @@ var interp;
  var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
  var klass = completed ? 'completed' : '';
 buf.push('<div');
-buf.push(attrs({ 'style':('position: relative; color:' + color), "class": (klass) }, {"style":true,"class":true}));
+buf.push(attrs({ 'style':('position: relative; color:' + color), "class": (klass) + ' ' + ('wf-item') }, {"style":true}));
 buf.push('>');
 if ( important)
 {
@@ -524,6 +524,7 @@ require.define("/client/requires/index.js",function(require,module,exports,__dir
 var calEvents = [];
 
 $('#calendar').fullCalendar({
+  selectable: true,
   header: {
     left:   'prev,next today',
     center: 'title',
@@ -532,9 +533,21 @@ $('#calendar').fullCalendar({
 });
 
 function refreshCalendarEvents() {
+  var tempEvents = [];
+  for (var i = 0; i < calEvents.length; ++i)
+    if (shouldShow(calEvents[i]))
+      tempEvents.push(calEvents[i]);
+
   $('#calendar').fullCalendar('removeEvents');
-  $('#calendar').fullCalendar('addEventSource', { events: calEvents });
+  $('#calendar').fullCalendar('addEventSource', { events: tempEvents });
   $('#calendar').fullCalendar('rerenderEvents');
+
+  function shouldShow(evt) {
+    var show = !evt.completed
+      , showHidden = !!$('[data-wfid=' + evt.id + ']').closest('.list').find('input').attr('checked');
+
+    return show || showHidden;
+  };
 };
 
 function initializeWorkflowy() {
@@ -544,16 +557,18 @@ function initializeWorkflowy() {
   $.get('/getWorkflowy', function (data) {
     $('.loading').remove();
     if (!data.success) return alert("Error: invalid workflowy cookie");
-    parseWFEvents(data.workflowy, getGroups(), '');
+    parseWFEvents(data.workflowy, getGroups(), 'black');
     refreshCalendarEvents();
     $('.linkToCal').click(function () {
       var date = new Date($(this).data('date'));
       $('#calendar').fullCalendar('gotoDate', date.getFullYear(), date.getMonth(), date.getDate());
+      $('#calendar').fullCalendar('select', date);
     });
   });
 
   $('.showHidden').click(function (e) {
-    $(this).closest('.list').find('.completed').toggle();
+    $(this).closest('.list').find('.completed').slideToggle(200);
+    refreshCalendarEvents();
   });
 };
 
@@ -593,9 +608,6 @@ function addItem(item, group, color) {
     , important = title.indexOf('#important') !== -1
     ;
 
-  if (important)
-    console.log(title, 'is important');
-
   var re = new RegExp("#important", "g");
   title = title.replace(re, '');
 
@@ -605,6 +617,7 @@ function addItem(item, group, color) {
   }
 
   var event = {
+    id: group.id,
     title: title,
     allDay: true,
     start: start,
