@@ -23,8 +23,12 @@ function initializeWorkflowy() {
   $.get('/getWorkflowy', function (data) {
     $('.loading').remove();
     if (!data.success) return alert("Error: invalid workflowy cookie");
-    parseWFEvents(data.workflowy, getGroups());
+    parseWFEvents(data.workflowy, getGroups(), '');
     refreshCalendarEvents();
+    $('.linkToCal').click(function () {
+      var date = new Date($(this).data('date'));
+      $('#calendar').fullCalendar('gotoDate', date.getFullYear(), date.getMonth(), date.getDate());
+    });
   });
 
   $('.showHidden').click(function (e) {
@@ -36,30 +40,48 @@ function getGroups() {
   var groups = [];
   var allLists = $('.wfItems');
   for (var i = 0; i < allLists.length; ++i)
-    groups.push($(allLists[i]).data('wfid'));
+    groups.push({
+      id: $(allLists[i]).data('wfid'),
+      disp: $(allLists[i]).data('wfdisp')
+    });
   return groups;
 };
 
-function parseWFEvents(wf, groups) {
+function parseWFEvents(wf, groups, color) {
   for (var i = 0; i < wf.length; ++i) {
-    isTagged(wf[i]);
+    var sections = wf[i].nm.split('---')
+      , newColor = grabColor(sections) || color;
+
+    isTagged(wf[i], newColor);
     if (wf[i].ch && wf[i].ch.length)
-      parseWFEvents(wf[i].ch, groups);
+      parseWFEvents(wf[i].ch, groups, newColor);
   }
 
-  function isTagged(item) {
+  function isTagged(item, color) {
     for (var i = 0; i < groups.length; ++i)
-      if (item.nm.indexOf(groups[i]) !== -1 && item.nm.indexOf('#no') === -1)
-        addItem(item, groups[i]);
+      if (item.nm.indexOf(groups[i].id) !== -1 && item.nm.indexOf('#no') === -1)
+        addItem(item, groups[i], color);
   };
 };
 
-function addItem(item, group) {
+function addItem(item, group, color) {
   var sections = item.nm.split('---')
-    , color = grabColor(sections)
+    , color = grabColor(sections) || color
     , start = grabDate(sections)
     , title = sections.join('---')
+    , important = title.indexOf('#important') !== -1
     ;
+
+  if (important)
+    console.log(title, 'is important');
+
+  var re = new RegExp("#important", "g");
+  title = title.replace(re, '');
+
+  if (!group.disp) {
+    re = new RegExp(group.id, "g");
+    title = title.replace(re, '');
+  }
 
   var event = {
     title: title,
@@ -67,26 +89,14 @@ function addItem(item, group) {
     start: start,
     color: color,
     url: '//www.workflowy.com/#/' + item.id,
-    completed: !!item.cp
+    completed: !!item.cp,
+    important: important
   };
 
   if (event.start)
     calEvents.push(event);
 
-  $('.wfItems[data-wfid="' + group + '"]').append(render('listItem', event));
-
-  function grabColor(sections) {
-    for (var i = 1; i < sections.length; ++i) {
-      var section = sections[i];
-      if (section.indexOf('color') !== -1) {
-        section = section.replace('color', '');
-        section = section.trim();
-        sections = sections.splice(i, 1);
-        return section;
-      }
-    }
-    return '';
-  };
+  $('.wfItems[data-wfid="' + group.id + '"]').append(render('listItem', event));
 
   function grabDate(sections) {
     for (var i = 1; i < sections.length; ++i) {
@@ -101,6 +111,19 @@ function addItem(item, group) {
     }
     return '';
   };
+};
+
+function grabColor(sections) {
+  for (var i = 1; i < sections.length; ++i) {
+    var section = sections[i];
+    if (section.indexOf('color') !== -1) {
+      section = section.replace('color', '');
+      section = section.trim();
+      sections = sections.splice(i, 1);
+      return section;
+    }
+  }
+  return '';
 };
 
 function dateFromString(str) {

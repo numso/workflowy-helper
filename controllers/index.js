@@ -14,6 +14,11 @@ exports.init = function(app) {
     app.middleware.render('index/settings')
   );
 
+  app.get('/help',
+    app.middleware.isLoggedIn(true),
+    app.middleware.render('index/help')
+  );
+
   app.post('/updateSettings',
     app.middleware.isLoggedIn(true),
     updateSettings(app)

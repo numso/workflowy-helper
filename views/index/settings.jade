@@ -1,5 +1,6 @@
 extends ../layout
 include ../components/mainNav
+include ../components/settings
 
 block title
   title Workflowy Helper - Settings
@@ -17,13 +18,7 @@ block content
     .labels
       .label Workflowy Tags:
       if user.settings.wfLabels
-        each label in user.settings.wfLabels
-          .wfLabel
-            span name:
-            input(type='text', value=label.name).wfName
-            span id:
-            input(type='text', value=label.id).wfID
-            span.deleteButton x
+        +settings(user.settings.wfLabels)
       .addNew Add New Label
     .saveAll Save Changes
 

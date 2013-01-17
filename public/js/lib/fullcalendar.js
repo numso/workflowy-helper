@@ -4639,7 +4639,7 @@ function DayEventRenderer() {
 			url = event.url;
 			skinCss = getSkinCss(event, opt);
 			if (url) {
-				html += "<a href='" + htmlEscape(url) + "'";
+				html += "<a target='_blank' href='" + htmlEscape(url) + "'";
 			}else{
 				html += "<div";
 			}

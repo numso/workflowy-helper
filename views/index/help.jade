@@ -1,0 +1,24 @@
+extends ../layout
+include ../components/mainNav
+
+block title
+  title Workflowy Helper - Help
+
+block content
+  +mainnav(2)
+  .help
+    .main-info This is an app that lets you organize your workflowy items. You need to format your items like so:
+    .example #myTag My Cool Event --- due 1/27 --- color red
+    .more-info And then in settings, put #myTag as the id
+    .bleh color is optional and accepts any valid html color code (children inherit colors from parent items)
+    .bleh due is optional and can be written in three ways: day, month/day, or month/day/year
+
+    hr
+
+    .bleh #no is reserved and adding it will make sure the item never shows up
+    .bleh #important is reserved and adding it will put a red ! next to you item
+
+    hr
+
+    .bleh You can find your workflowy id by going to workflowy.com in chrome, right click, inspect element, refresh the page. Go to the network tab. Select an item on the left. Select headers. It'll be under cookies. Here's an example of what you need to give me.
+    .example sessionid=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx

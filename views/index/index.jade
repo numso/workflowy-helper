@@ -28,7 +28,7 @@ block content
             span(style='float: right') Show Hidden
             .title= label.name
             +loading('Loading ' + label.id)
-            .wfItems(data-wfid=label.id)
+            .wfItems(data-wfid=label.id, data-wfdisp=label.disp)
       else
         .error Looks like you need to add some ids for Workflowy. Head on over to 
           a(href='/settings') Settings

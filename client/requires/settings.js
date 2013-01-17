@@ -1,9 +1,11 @@
+var render = require('./render');
+
 $('.deleteButton').click(function () {
   $(this).closest('.wfLabel').remove();
 });
 
 $('.addNew').click(function () {
-  $(this).before('<div class="wfLabel"><span>name:</span><input type="text" class="wfName"><span>id:</span><input type="text" class="wfID"><span class="deleteButton">x</span></div>');
+  $(this).before(render('settingsItem'));
 
   $('.deleteButton').last().click(function () {
     $(this).closest('.wfLabel').remove();
@@ -28,7 +30,8 @@ function saveAll() {
     var label = $(labels[i]);
     var myObj = {
       name: label.find('.wfName').val(),
-      id: label.find('.wfID').val()
+      id: label.find('.wfID').val(),
+      disp: !!label.find('.wfDisp').attr('checked')
     };
 
     if (myObj.name && myObj.id)

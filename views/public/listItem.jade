@@ -1,8 +1,11 @@
 - var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 - var klass = completed ? 'completed' : '';
 
-div(style='color:' + color)
-  a(href=url, class=klass, style='color:' + color)= title
-  - if (start)
+div(style='position: relative; color:' + color, class=klass)
+  if important
+    .important !
+  if start
+    a(href="#", style='color:' + color, data-date="#{start}").linkToCal= title
     div due on #{MONTHS[start.getMonth()]} #{start.getDate()}
-div blaoeuaoeunsoaehtaoeu
+  else
+    a(href=url, target="_blank", style='color:' + color)= title

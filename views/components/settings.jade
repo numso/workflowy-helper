@@ -1,0 +1,18 @@
+mixin settings(labels)
+  each label in labels
+    +settings-item(label)
+
+mixin settings-item(label)
+  - label = label || {};
+  - var name = label.name || '';
+  - var id = label.id || '';
+  - var disp = (label.disp === "false") ? false : true;
+
+  .wfLabel
+    span name:
+    input(type='text', value=name).wfName
+    span id:
+    input(type='text', value=id).wfID
+    input(type='checkbox', checked=disp).wfDisp
+    span Display Tag?
+    span.deleteButton x
