@@ -29,14 +29,16 @@ function refreshCalendarEvents() {
   };
 };
 
-function initializeWorkflowy() {
+function initializeWorkflowy(defColor) {
+  defColor = defColor || 'black';
+
   if (!$('.wfItems').length)
     return $('.loading').remove();
 
   $.get('/getWorkflowy', function (data) {
     $('.loading').remove();
     if (!data.success) return alert("Error: invalid workflowy cookie");
-    parseWFEvents(data.workflowy, getGroups(), 'black');
+    parseWFEvents(data.workflowy, getGroups(), defColor);
     refreshCalendarEvents();
     $('.linkToCal').click(function () {
       var date = new Date($(this).data('date'));

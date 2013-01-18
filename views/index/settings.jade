@@ -8,10 +8,14 @@ block title
 block content
   +mainnav(1)
   .settings
+    - var defColor = user.settings.defaultColor || 'black';
     h1 Settings Page
     .wfCookie
       span WorkFlowy Cookie
       input(type='text', value=user.settings.wfCookie).wfCookie-val
+    .defaultColor
+      span Default Item Color
+      input(type='text', value=defColor).wfColor-val
     .showCal
       input(type='checkbox', checked=(user.settings.showCalendar == "true")).showCal-val
       span Show Calendar?

@@ -550,14 +550,16 @@ function refreshCalendarEvents() {
   };
 };
 
-function initializeWorkflowy() {
+function initializeWorkflowy(defColor) {
+  defColor = defColor || 'black';
+
   if (!$('.wfItems').length)
     return $('.loading').remove();
 
   $.get('/getWorkflowy', function (data) {
     $('.loading').remove();
     if (!data.success) return alert("Error: invalid workflowy cookie");
-    parseWFEvents(data.workflowy, getGroups(), 'black');
+    parseWFEvents(data.workflowy, getGroups(), defColor);
     refreshCalendarEvents();
     $('.linkToCal').click(function () {
       var date = new Date($(this).data('date'));
@@ -964,7 +966,7 @@ require.define("/client/requires/register.js",function(require,module,exports,__
   processRegistration();
 });
 
-$('.rkey').keypress(function (e) {
+$('.cpass').keypress(function (e) {
   if (e.keyCode === 13)
     processRegistration();
 });
@@ -980,7 +982,6 @@ function processRegistration() {
     email: $('.email').val(),
     pass: $('.pass').val(),
     cpass: $('.cpass').val(),
-    rkey: $('.rkey').val()
   };
 
   if (!validate(userObj)) {
@@ -1035,11 +1036,6 @@ function validate(user) {
     isValid = false;
   }
 
-  if (!user.rkey) {
-    $('.rkey').css('border-color', 'red');
-    isValid = false;
-  }
-
   if (user.pass !== user.cpass) {
     $('.cpass').css('border-color', 'red');
     isValid = false;
@@ -1074,6 +1070,7 @@ function saveAll() {
   var settings = {
     showCalendar: !!$('.showCal-val').attr('checked'),
     wfCookie: $('.wfCookie-val').val(),
+    defaultColor: $('.wfColor-val').val(),
     wfLabels: []
   };
 

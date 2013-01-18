@@ -34,10 +34,6 @@ function register(app) {
   return function (req, res, next) {
     var user = req.body;
 
-    if (user.rkey !== 'speedyshop1')
-      return res.send({status: 'err', msg: 'Wrong Token'});
-
-
     User.userExists(user.user, function (err, exists) {
       if (exists) return res.send({status: 'err', msg: 'Username Taken'});
 
@@ -46,7 +42,6 @@ function register(app) {
 
     function finishRegister() {
       delete user.cpass;
-      delete user.rkey;
 
       var salt = bcrypt.genSaltSync(10);
       user.pass = bcrypt.hashSync(user.pass, salt);

@@ -218,6 +218,19 @@
     },
     "waitress": {
       "version": "0.1.2"
+    },
+    "connect-mongo": {
+      "version": "0.2.0",
+      "dependencies": {
+        "mongodb": {
+          "version": "1.0.2",
+          "dependencies": {
+            "bson": {
+              "version": "0.0.6"
+            }
+          }
+        }
+      }
     }
   }
 }

@@ -2,13 +2,47 @@ var express = require('express')
   , http = require('http')
   , path = require('path')
   , fs = require('fs')
+  , MongoStore = require('connect-mongo')(express)
   ;
 
 var app = express();
 
 var sessOptions = {
   key: 'dalspage.sid',
-  secret: "6ae0c2595c9d7404b47d6ac70cc7c"
+  secret: "6ae0c2595c9d7404b47d6ac70cc7c",
+  store: new MongoStore({
+    url: setupMongo()
+  })
+};
+
+function setupMongo() {
+  if (process.env.VCAP_SERVICES) {
+    var env = JSON.parse(process.env.VCAP_SERVICES);
+    var mongo = env['mongodb-1.8'][0]['credentials'];
+  } else {
+    var mongo = {
+      "hostname": "localhost",
+      "port": 27017,
+      "username": "",
+      "password": "", 
+      "name": "",
+      "db": "workflowy"
+    };
+  }
+
+  var generate_mongo_url = function(obj){
+    obj.hostname = (obj.hostname || 'localhost');
+    obj.port = (obj.port || 27017);
+    obj.db = (obj.db || 'test');
+
+    if (obj.username && obj.password) {
+      return "mongodb://" + obj.username + ":" + obj.password + "@" + obj.hostname + ":" + obj.port + "/" + obj.db;
+    } else {
+      return "mongodb://" + obj.hostname + ":" + obj.port + "/" + obj.db;
+    }
+  };
+
+  return generate_mongo_url(mongo);
 };
 
 app.configure(function () {

@@ -2,7 +2,7 @@ $('input[type=button]').click(function (e) {
   processRegistration();
 });
 
-$('.rkey').keypress(function (e) {
+$('.cpass').keypress(function (e) {
   if (e.keyCode === 13)
     processRegistration();
 });
@@ -18,7 +18,6 @@ function processRegistration() {
     email: $('.email').val(),
     pass: $('.pass').val(),
     cpass: $('.cpass').val(),
-    rkey: $('.rkey').val()
   };
 
   if (!validate(userObj)) {
@@ -70,11 +69,6 @@ function validate(user) {
 
   if (!user.cpass) {
     $('.cpass').css('border-color', 'red');
-    isValid = false;
-  }
-
-  if (!user.rkey) {
-    $('.rkey').css('border-color', 'red');
     isValid = false;
   }
 

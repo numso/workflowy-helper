@@ -123,6 +123,12 @@ html {
 .settings .wfCookie span {
   margin-right: 20px;
 }
+.settings .defaultColor {
+  margin-top: 20px;
+}
+.settings .defaultColor span {
+  margin-right: 28px;
+}
 .settings .showCal {
   margin-top: 20px;
 }

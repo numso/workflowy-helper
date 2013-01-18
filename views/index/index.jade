@@ -46,5 +46,5 @@ append scripts
   script
     $(function () {
       var init = require('/client/requires/index');
-      init();
+      init("#{user.settings.defaultColor}");
     });

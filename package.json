@@ -16,6 +16,7 @@
     "browserify": "~1.17.2",
     "sleep": "~1.1.0",
     "bless": "~3.0.2",
-    "waitress": "~0.1.2"
+    "waitress": "~0.1.2",
+    "connect-mongo": "~0.2.0"
   }
 }
