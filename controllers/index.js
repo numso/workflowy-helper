@@ -73,19 +73,21 @@ function getWorkflowy(req, res, next) {
       if (resp.statusCode !== 200)
         return res.send({success: false, err: 'bad cookie'});
 
+      var window = {};
       eval(d);
+      var datums = getProjectTreeData();
 
       var myObj = {
         success: true,
-        workflowy: MAIN_PROJECT_TREE_INFO.rootProjectChildren
+        workflowy: datums.mainProjectTreeInfo.rootProjectChildren
       };
 
-      if (AUXILIARY_PROJECT_TREE_INFOS && AUXILIARY_PROJECT_TREE_INFOS.length)
-        for (var i = 0; i < AUXILIARY_PROJECT_TREE_INFOS.length; ++i)
+      if (datums.auxiliaryProjectTreeInfos && datums.auxiliaryProjectTreeInfos.length)
+        for (var i = 0; i < datums.auxiliaryProjectTreeInfos.length; ++i)
           myObj.workflowy.push({
-            id: AUXILIARY_PROJECT_TREE_INFOS[i].rootProject.id,
-            nm: AUXILIARY_PROJECT_TREE_INFOS[i].rootProject.nm,
-            ch: AUXILIARY_PROJECT_TREE_INFOS[i].rootProjectChildren
+            id: datums.auxiliaryProjectTreeInfos[i].rootProject.id,
+            nm: datums.auxiliaryProjectTreeInfos[i].rootProject.nm,
+            ch: datums.auxiliaryProjectTreeInfos[i].rootProjectChildren
           });
 
       return res.send(myObj);
