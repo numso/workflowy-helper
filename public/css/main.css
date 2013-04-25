@@ -1,6 +1,7 @@
 * {
   margin: 0;
   padding: 0;
+  font-family: TrebuchetMS, Helvetica, sans-serif;
 }
 body {
   height: 100%;
@@ -122,6 +123,12 @@ html {
 }
 .settings .wfCookie span {
   margin-right: 20px;
+}
+.settings .wfQs {
+  margin-top: 20px;
+}
+.settings .wfQs span {
+  margin-right: 55px;
 }
 .settings .defaultColor {
   margin-top: 20px;

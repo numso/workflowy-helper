@@ -19,7 +19,7 @@ block content
   - var stile = (user.settings.showCalendar === "false") ? 'display: none' : ''
   #calendar(style=stile)
 
-  if user.settings.wfCookie
+  - if (user.settings.wfCookie && user.settings.wfQs)
     .wfLists
       if user.settings.wfLabels
         each label in user.settings.wfLabels
@@ -33,7 +33,7 @@ block content
         .error Looks like you need to add some ids for Workflowy. Head on over to 
           a(href='/settings') Settings
   else
-    .error Looks like you need to add a cookie on the 
+    .error Looks like you need to add a cookie, a QS or both on the 
       a(href='/settings') Settings
       |  page
 

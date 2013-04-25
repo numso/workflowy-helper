@@ -47,7 +47,7 @@ function updateSettings(app) {
 function getWorkflowy(req, res, next) {
   var options = {
     hostname: 'www.workflowy.com',
-    path: '/get_project_tree_data',
+    path: '/get_project_tree_data?t=' + req.session.user.settings.wfQs,
     method: 'GET',
     headers: {
       Accept: '*/*',
@@ -73,9 +73,14 @@ function getWorkflowy(req, res, next) {
       if (resp.statusCode !== 200)
         return res.send({success: false, err: 'bad cookie'});
 
-      var window = {};
+      var window = {
+        location: {
+          host: 'workflowy.com'
+        }
+      };
+
       eval(d);
-      var datums = getProjectTreeData();
+      var datums = window.getProjectTreeData();
 
       var myObj = {
         success: true,

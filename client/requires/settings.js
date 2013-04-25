@@ -22,6 +22,7 @@ function saveAll() {
   var settings = {
     showCalendar: !!$('.showCal-val').attr('checked'),
     wfCookie: $('.wfCookie-val').val(),
+    wfQs: $('.wfQs-val').val(),
     defaultColor: $('.wfColor-val').val(),
     wfLabels: []
   };

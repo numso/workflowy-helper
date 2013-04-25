@@ -558,7 +558,7 @@ function initializeWorkflowy(defColor) {
 
   $.get('/getWorkflowy', function (data) {
     $('.loading').remove();
-    if (!data.success) return alert("Error: invalid workflowy cookie");
+    if (!data.success) return alert("Error: invalid workflowy cookie or qs.");
     parseWFEvents(data.workflowy, getGroups(), defColor);
     refreshCalendarEvents();
     $('.linkToCal').click(function () {
@@ -1070,6 +1070,7 @@ function saveAll() {
   var settings = {
     showCalendar: !!$('.showCal-val').attr('checked'),
     wfCookie: $('.wfCookie-val').val(),
+    wfQs: $('.wfQs-val').val(),
     defaultColor: $('.wfColor-val').val(),
     wfLabels: []
   };
